@@ -1,5 +1,7 @@
 # objviewer
 
+[![CI](https://github.com/huarkiou/objviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/huarkiou/objviewer/actions/workflows/ci.yml)
+
 Lightweight Wavefront OBJ file viewer — single ~12 MB binary.
 
 Amber-on-gray CAD-style rendering with sharp edge wireframe overlay.
