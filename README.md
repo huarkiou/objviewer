@@ -1,8 +1,8 @@
 # objviewer
 
-Lightweight Wavefront OBJ file viewer — replace your heavy Godot viewer with a single ~12 MB binary.
+Lightweight Wavefront OBJ file viewer — single ~12 MB binary.
 
-Inspired by Siemens NX's amber-on-gray look, with sharp edge wireframe overlay for CAD-style model inspection.
+Amber-on-gray CAD-style rendering with sharp edge wireframe overlay.
 
 ## Usage
 
@@ -42,7 +42,7 @@ Binary at `target/release/objviewer[.exe]`.
 - Sharp edge wireframe overlay (dihedral angle threshold 30°)
 - Orbit camera with orthographic/perspective toggle
 - 4× MSAA anti-aliasing
-- NX-style amber material with even flat lighting
+- CAD-style amber material with even flat lighting
 
 ## Tech stack
 
