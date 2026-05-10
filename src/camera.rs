@@ -227,8 +227,10 @@ mod tests {
 
     #[test]
     fn test_projection_matrix_ortho_vs_perspective() {
-        let mut cam = Camera::default();
-        cam.orthographic = true;
+        let mut cam = Camera {
+            orthographic: true,
+            ..Default::default()
+        };
         let ortho = cam.projection_matrix();
 
         cam.orthographic = false;
@@ -269,15 +271,16 @@ mod tests {
 
     #[test]
     fn test_reset() {
-        let mut cam = Camera::default();
-        cam.yaw = 3.0;
-        cam.pitch = 0.5;
-        cam.distance = 10.0;
-        cam.fov = 45.0_f32.to_radians();
-        cam.orthographic = false;
-        cam.aspect = 2.0;
-        cam.near = 0.1;
-        cam.far = 200.0;
+        let mut cam = Camera {
+            yaw: 3.0,
+            pitch: 0.5,
+            distance: 10.0,
+            fov: 45.0_f32.to_radians(),
+            orthographic: false,
+            aspect: 2.0,
+            near: 0.1,
+            far: 200.0,
+        };
 
         cam.reset();
         let default = Camera::default();
