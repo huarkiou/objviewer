@@ -1,6 +1,8 @@
 // OBJ Viewer — lightweight Wavefront OBJ file viewer
 // Ported from Godot/C# to Rust (winit + wgpu + egui)
 
+#![windows_subsystem = "windows"]
+
 use std::sync::Arc;
 
 use clap::Parser;
