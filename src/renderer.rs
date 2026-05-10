@@ -204,64 +204,62 @@ impl Renderer {
         });
 
         // ---- render pipeline ----
-        let render_pipeline =
-            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: Some("Mesh render pipeline"),
-                layout: Some(&pipeline_layout),
-                vertex: wgpu::VertexState {
-                    module: &shader_module,
-                    entry_point: Some("vs_main"),
-                    compilation_options: Default::default(),
-                    buffers: &[wgpu::VertexBufferLayout {
-                        array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
-                        step_mode: wgpu::VertexStepMode::Vertex,
-                        attributes: &[
-                            // position @ location 0, offset 0
-                            wgpu::VertexAttribute {
-                                offset: 0,
-                                format: wgpu::VertexFormat::Float32x3,
-                                shader_location: 0,
-                            },
-                            // normal @ location 1, offset 12 (3 × f32)
-                            wgpu::VertexAttribute {
-                                offset: std::mem::size_of::<[f32; 3]>()
-                                    as wgpu::BufferAddress,
-                                format: wgpu::VertexFormat::Float32x3,
-                                shader_location: 1,
-                            },
-                        ],
-                    }],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &shader_module,
-                    entry_point: Some("fs_main"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format: config.format,
-                        blend: Some(wgpu::BlendState::REPLACE),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::TriangleList,
-                    strip_index_format: None,
-                    front_face: wgpu::FrontFace::Ccw,
-                    cull_mode: None,
-                    unclipped_depth: false,
-                    polygon_mode: wgpu::PolygonMode::Fill,
-                    conservative: false,
-                },
-                depth_stencil: Some(wgpu::DepthStencilState {
-                    format: wgpu::TextureFormat::Depth32Float,
-                    depth_write_enabled: Some(true),
-                    depth_compare: Some(wgpu::CompareFunction::Greater),
-                    stencil: wgpu::StencilState::default(),
-                    bias: wgpu::DepthBiasState::default(),
-                }),
-                multisample,
-                multiview_mask: None,
-                cache: None,
-            });
+        let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("Mesh render pipeline"),
+            layout: Some(&pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &shader_module,
+                entry_point: Some("vs_main"),
+                compilation_options: Default::default(),
+                buffers: &[wgpu::VertexBufferLayout {
+                    array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
+                    step_mode: wgpu::VertexStepMode::Vertex,
+                    attributes: &[
+                        // position @ location 0, offset 0
+                        wgpu::VertexAttribute {
+                            offset: 0,
+                            format: wgpu::VertexFormat::Float32x3,
+                            shader_location: 0,
+                        },
+                        // normal @ location 1, offset 12 (3 × f32)
+                        wgpu::VertexAttribute {
+                            offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+                            format: wgpu::VertexFormat::Float32x3,
+                            shader_location: 1,
+                        },
+                    ],
+                }],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader_module,
+                entry_point: Some("fs_main"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: config.format,
+                    blend: Some(wgpu::BlendState::REPLACE),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                strip_index_format: None,
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: None,
+                unclipped_depth: false,
+                polygon_mode: wgpu::PolygonMode::Fill,
+                conservative: false,
+            },
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(wgpu::CompareFunction::Greater),
+                stencil: wgpu::StencilState::default(),
+                bias: wgpu::DepthBiasState::default(),
+            }),
+            multisample,
+            multiview_mask: None,
+            cache: None,
+        });
 
         // ---- line (wireframe overlay) pipeline ----
         let line_shader_source = include_str!("shader_line.wgsl");
@@ -271,77 +269,72 @@ impl Renderer {
         });
 
         // Line pipeline only needs camera bind group (group 0)
-        let line_pipeline_layout =
-            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                label: Some("Line pipeline layout"),
-                bind_group_layouts: &[Some(&camera_bgl)],
-                immediate_size: 0,
-            });
+        let line_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("Line pipeline layout"),
+            bind_group_layouts: &[Some(&camera_bgl)],
+            immediate_size: 0,
+        });
 
-        let line_pipeline =
-            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: Some("Line pipeline"),
-                layout: Some(&line_pipeline_layout),
-                vertex: wgpu::VertexState {
-                    module: &line_shader_module,
-                    entry_point: Some("vs_main"),
-                    compilation_options: Default::default(),
-                    buffers: &[wgpu::VertexBufferLayout {
-                        array_stride: std::mem::size_of::<Vertex>()
-                            as wgpu::BufferAddress,
-                        step_mode: wgpu::VertexStepMode::Vertex,
-                        attributes: &[
-                            wgpu::VertexAttribute {
-                                offset: 0,
-                                format: wgpu::VertexFormat::Float32x3,
-                                shader_location: 0,
-                            },
-                            wgpu::VertexAttribute {
-                                offset: std::mem::size_of::<[f32; 3]>()
-                                    as wgpu::BufferAddress,
-                                format: wgpu::VertexFormat::Float32x3,
-                                shader_location: 1,
-                            },
-                        ],
-                    }],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &line_shader_module,
-                    entry_point: Some("fs_main"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format: config.format,
-                        blend: Some(wgpu::BlendState::REPLACE),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::LineList,
-                    strip_index_format: None,
-                    front_face: wgpu::FrontFace::Ccw,
-                    cull_mode: None,
-                    unclipped_depth: false,
-                    polygon_mode: wgpu::PolygonMode::Fill,
-                    conservative: false,
-                },
-                depth_stencil: Some(wgpu::DepthStencilState {
-                    format: wgpu::TextureFormat::Depth32Float,
-                    depth_write_enabled: Some(false),
-                    depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
-                    stencil: wgpu::StencilState::default(),
-                    bias: wgpu::DepthBiasState::default(),
-                }),
-                multisample,
-                multiview_mask: None,
-                cache: None,
-            });
+        let line_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("Line pipeline"),
+            layout: Some(&line_pipeline_layout),
+            vertex: wgpu::VertexState {
+                module: &line_shader_module,
+                entry_point: Some("vs_main"),
+                compilation_options: Default::default(),
+                buffers: &[wgpu::VertexBufferLayout {
+                    array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
+                    step_mode: wgpu::VertexStepMode::Vertex,
+                    attributes: &[
+                        wgpu::VertexAttribute {
+                            offset: 0,
+                            format: wgpu::VertexFormat::Float32x3,
+                            shader_location: 0,
+                        },
+                        wgpu::VertexAttribute {
+                            offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+                            format: wgpu::VertexFormat::Float32x3,
+                            shader_location: 1,
+                        },
+                    ],
+                }],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &line_shader_module,
+                entry_point: Some("fs_main"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format: config.format,
+                    blend: Some(wgpu::BlendState::REPLACE),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::LineList,
+                strip_index_format: None,
+                front_face: wgpu::FrontFace::Ccw,
+                cull_mode: None,
+                unclipped_depth: false,
+                polygon_mode: wgpu::PolygonMode::Fill,
+                conservative: false,
+            },
+            depth_stencil: Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: Some(false),
+                depth_compare: Some(wgpu::CompareFunction::GreaterEqual),
+                stencil: wgpu::StencilState::default(),
+                bias: wgpu::DepthBiasState::default(),
+            }),
+            multisample,
+            multiview_mask: None,
+            cache: None,
+        });
 
         // ---- depth texture ----
         let (depth_texture, depth_view) = Self::create_depth_texture(&device, &config, 1);
 
         // ---- MSAA textures ----
-        let (msaa_texture, msaa_view) =
-            Self::create_msaa_color(&device, &config, sample_count);
+        let (msaa_texture, msaa_view) = Self::create_msaa_color(&device, &config, sample_count);
         let (msaa_depth, msaa_depth_view) =
             Self::create_depth_texture(&device, &config, sample_count);
 
@@ -675,8 +668,11 @@ impl Renderer {
             _pad: [0.0],
         };
 
-        self.queue
-            .write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[camera_uniform]));
+        self.queue.write_buffer(
+            &self.camera_buffer,
+            0,
+            bytemuck::cast_slice(&[camera_uniform]),
+        );
     }
 
     /// Render the currently loaded mesh with Blinn-Phong lighting.
@@ -771,10 +767,7 @@ impl Renderer {
         }
         render_pass.set_pipeline(&self.line_pipeline);
         render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
-        render_pass.set_vertex_buffer(
-            0,
-            self.vertex_buffer.as_ref().unwrap().slice(..),
-        );
+        render_pass.set_vertex_buffer(0, self.vertex_buffer.as_ref().unwrap().slice(..));
         render_pass.set_index_buffer(
             self.line_index_buffer.as_ref().unwrap().slice(..),
             wgpu::IndexFormat::Uint32,

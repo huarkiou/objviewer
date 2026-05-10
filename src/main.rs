@@ -119,10 +119,19 @@ impl ApplicationHandler for ObjViewerApp {
 
         // Setup egui
         let viewport_id = self.egui_ctx.viewport_id();
-        let egui_winit =
-            egui_winit::State::new(self.egui_ctx.clone(), viewport_id, &window, None, None, None);
-        let egui_renderer =
-            egui_wgpu::Renderer::new(&renderer.device, renderer.config.format, egui_wgpu::RendererOptions::default());
+        let egui_winit = egui_winit::State::new(
+            self.egui_ctx.clone(),
+            viewport_id,
+            &window,
+            None,
+            None,
+            None,
+        );
+        let egui_renderer = egui_wgpu::Renderer::new(
+            &renderer.device,
+            renderer.config.format,
+            egui_wgpu::RendererOptions::default(),
+        );
 
         self.renderer = Some(renderer);
         self.egui_winit = Some(egui_winit);
@@ -216,7 +225,10 @@ impl ObjViewerApp {
                 Some(s) => s,
                 None => return,
             };
-            (egui_winit.take_egui_input(window), egui_winit.egui_ctx().clone())
+            (
+                egui_winit.take_egui_input(window),
+                egui_winit.egui_ctx().clone(),
+            )
         };
 
         let mut pending_action = UiAction::None;
