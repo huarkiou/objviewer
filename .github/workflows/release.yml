@@ -51,9 +51,9 @@ jobs:
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
-        shell: pwsh
+        shell: bash
         run: |
-          Compress-Archive -Path "target/${{ matrix.target }}/release/objviewer${{ matrix.ext }}" -DestinationPath "objviewer-${{ matrix.target }}.zip"
+          (cd "target/${{ matrix.target }}/release" && 7z a "../../../objviewer-${{ matrix.target }}.zip" "objviewer${{ matrix.ext }}")
 
       - name: Package (Unix)
         if: matrix.os != 'windows-latest'
