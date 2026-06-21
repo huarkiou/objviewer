@@ -9,7 +9,20 @@ on:
         type: string
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate version tag
+        shell: bash
+        run: |
+          if ! echo "${{ inputs.version }}" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Invalid version tag '${{ inputs.version }}'. Must match vX.Y.Z (e.g. v0.1.0)."
+            exit 1
+          fi
+          echo "Version tag '${{ inputs.version }}' is valid."
+
   build:
+    needs: validate
     strategy:
       matrix:
         include:
