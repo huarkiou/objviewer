@@ -46,6 +46,16 @@ Binary at `target/release/objviewer[.exe]`.
 - 4× MSAA anti-aliasing
 - CAD-style amber material with even flat lighting
 
+## Interop with nozzle-design-rs
+
+[nozzle-design-rs](https://github.com/huarkiou/nozzle-design-rs) 的 `sltn` 应用导出的 `.obj` 模型（`model.obj` / `downstream.obj` / `upstream.obj`）是本查看器的主要使用场景。
+
+**兼容契约**：`sltn` 的 OBJ 导出仅使用本 parser 支持的 token 子集——`v`、`vn`、`f v//vn` 三角形面。
+
+- 该契约由本仓库 `test_fixtures/sltn.obj`（nozzle-design-rs 输出的真实样本）与 `src/parser.rs` 的 `test_parse_sltn_fixture` 测试守护
+- 若 `sltn` 导出格式变更（新增 token、四边形面、负索引等），本 parser 或 `sltn` 必须同步修改，且测试会首先失败
+- `o`/`g`/`s`/`mtllib`/`usemtl` token 仅警告不报错；`cstype` 等曲线曲面 token 为致命错误
+
 ## Tech stack
 
 | Crate | Version |

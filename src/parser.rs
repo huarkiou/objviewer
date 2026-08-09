@@ -537,4 +537,30 @@ v 1.0 2.0 3.0 4.0
         let obj = ObjData::load(&path).unwrap();
         assert_eq!(obj.positions[0], [1.0, 2.0, 3.0, 4.0]);
     }
+
+    // ── Test 11: nozzle-design-rs sltn 导出模型 (test_fixtures/sltn.obj) ──
+    // 互操作契约: nozzle-design-rs 的 sltn 导出的 .obj 必须能被本 parser 解析。
+    // 该 fixture 是 nozzle-design-rs 输出的真实样本, 仅含 v/vn/f v//vn。
+
+    #[test]
+    fn test_parse_sltn_fixture() {
+        let result = ObjData::load("test_fixtures/sltn.obj");
+        assert!(
+            result.is_ok(),
+            "Failed to parse sltn.obj: {:?}",
+            result.err()
+        );
+
+        let obj = result.unwrap();
+        assert!(obj.positions.len() > 8000, "sltn.obj 应有 8000+ 顶点");
+        assert_eq!(obj.positions.len(), obj.normals.len());
+        assert_eq!(obj.positions.len(), 8214);
+        assert!(obj.has_normals);
+        assert_eq!(obj.num_faces, 16280);
+        // 全部为三角形: 每个面恰好 3 个索引
+        assert_eq!(obj.num_indices, 16280 * 3);
+        for face in &obj.faces {
+            assert_eq!(face.v_idx.len(), 3, "所有面必须是三角形");
+        }
+    }
 }
